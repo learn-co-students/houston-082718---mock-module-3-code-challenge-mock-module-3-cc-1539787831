@@ -6,8 +6,8 @@ fetch(URL)
 .then(dogs=> renderDogs(dogs))
 
 //---> Render all dogs to dog table
+const table = document.querySelector('#table-body')
 function renderDogs(dogs) {
-  const table = document.querySelector('#table-body')
   dogs.forEach(dog=> {
     table.innerHTML += `
       <tr>
@@ -32,6 +32,7 @@ document.addEventListener('click', function(event) {
 })
 
 
+
 //---> Puts selected dog into edit form and makes PATCH request
 function renderEditForm(dog) {
   const editForm = document.querySelector('#dog-form')
@@ -39,6 +40,7 @@ function renderEditForm(dog) {
   editForm.children[1].value = dog.breed
   editForm.children[2].value = dog.sex
   editForm.children[3].addEventListener('click', function(event) {
+    event.preventDefault()
     let data = {
       name: editForm.children[0].value,
       breed: editForm.children[1].value,
@@ -48,6 +50,14 @@ function renderEditForm(dog) {
       method: "PATCH",
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(data)
+    })
+    .then(function() {
+      fetch(URL)
+      .then(resp=>resp.json())
+      .then(dogs=>{
+        table.innerHTML = ''
+        renderDogs(dogs)
+      })
     })
   })
 }
