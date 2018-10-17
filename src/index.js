@@ -5,17 +5,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const dogId = parseInt(event.target.innerText);
         fetch(`http://localhost:3000/dogs/${dogId}`)
         .then(resp => resp.json())
-        .then(dogs => edit(dogs))
+        .then(dogs => edit(dogs, dogId))
         }
     })
 })
 
-function postData(url = `http://localhost:3000/api/v1/notes`, data = {"title": "good",
-"body": "stuff",
-"user":"bob"}) 
+function edit(dog, id){
+    let editDog = document.querySelector("#dog-form")
+    editDog.childNodes[1].value = dog.name
+    editDog.childNodes[3].value = dog.breed
+    editDog.childNodes[5].value = dog.sex
+    
+    editDog.addEventListener("submit", function(event){
+        event.preventDefault()
+        
+        let data = {
+            name: editDog.childNodes[1].value,
+            breed: editDog.childNodes[3].value,
+            sex: editDog.childNodes[5].value
+        }
+        console.log(data)
+        postData(`http://localhost:3000/dogs/${id}`, data)
+    })
+}
+
+function postData(url = `http://localhost:3000/dogs/1`, data = {"name": "good",
+"breed": "stuff",
+"sex":"bob"}) 
 {
     return fetch(url, {
-    method: "POST", 
+    method: "PATCH", 
     headers: {
         "Content-Type": "application/json",
         Accept: "application/json"
@@ -23,52 +42,6 @@ function postData(url = `http://localhost:3000/api/v1/notes`, data = {"title": "
     body: JSON.stringify(data), 
 })
 }
-
-function edit(dog, id){
-    let editDog = document.querySelector("#dog-form")
-    // event.preventDefault()
-    let name = editDog.childNodes[1].value = dog.name
-    let breed = editDog.childNodes[3].value = dog.breed
-    let sex = editDog.childNodes[5].value = dog.sex
-    
-    addToy.addEventListener("submit", function(event){
-        // event.preventDefault()
-        debugger
-        
-        // let data = {
-        //     name: name,
-        //     breed: breed,
-        //     sex: sex,
-        // }
-        
-        return fetch(`http://localhost:3000/dogs/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json"
-        },
-        body: JSON.stringify({
-            name: name,
-            breed: breed,
-            sex: sex,
-        })
-        })
-    })
-}
-
-// function postData(url = `http://localhost:3000/api/v1/notes`, data = {"title": "good",
-// "body": "stuff",
-// "user":"bob"}) 
-// {
-//     return fetch(url, {
-//     method: "POST", 
-//     headers: {
-//         "Content-Type": "application/json",
-//         Accept: "application/json"
-//     },
-//     body: JSON.stringify(data), 
-// })
-// }
 
 function getData(){
     fetch("http://localhost:3000/dogs")
