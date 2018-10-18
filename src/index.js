@@ -4,41 +4,37 @@ document.addEventListener("DOMContentLoaded", () => {
 // On page load, render a list of already registered dogs in the table. You can fetch these dogs from http://localhost:3000/dogs.
 
 function fetchDogs() {
+  document.getElementById("table-body").innerHTML = "";
   fetch("http://localhost:3000/dogs")
     .then(resp => resp.json())
     .then(data => {
-      // console.log(data);
-      data.forEach(dog => {
+      data.forEach(dog => {   
         renderDogs(dog);
       });
     });
 }
 
 function renderDogs(dog) {
-  let container = document.getElementById("table-body");
-  let id = dog.id;
-  container.innerHTML += `
-  <tr>
+  document.getElementById("table-body").innerHTML += `
+  <tr id="row-${dog.id}">
     <td>${dog.name}</td> 
     <td>${dog.breed}</td> 
     <td>${dog.sex}</td> 
-    <td><button data-id=${id} id="edit" onclick="editDog(${id})">Edit</button></td>
+    <td><button data-id=${dog.id} id="edit" onclick="editDog(${dog.id})">Edit</button></td>
   </tr>
   `;
 }
 
 //Make a dog editable. Clicking on the edit button next to a dog should populate the top form with that dog's current information.
 function editDog(id) {
-  console.log(id);
   fetch(`http://localhost:3000/dogs/${id}`)
     .then(resp => resp.json())
     .then(dog => {
-      // console.log(dog);
-      updateForm(dog);
+      updateDogForm(dog);
     });
 }
 
-function updateForm(dog) {
+function updateDogForm(dog) {
   let formContainer = document.getElementById("dog-form");
   formContainer.innerHTML = `
   <form id='dog-form' class="padding margin border-round border-grey">
@@ -51,9 +47,6 @@ function updateForm(dog) {
   `;
   formContainer.addEventListener("submit", event => {
     patchDog(event);
-    // formContainer.reset();
-    clearDogs();
-    fetchDogs();
   });
 }
 
@@ -61,25 +54,33 @@ function updateForm(dog) {
 
 function patchDog(event) {
   event.preventDefault();
-  console.log(event.target.id.value);
+  let dogId = event.target.id.value;
+  let dogName = event.target.name.value;
+  let dogBreed = event.target.breed.value;
+  let dogSex = event.target.sex.value;
+
   let data = {
-    id: event.target.id.value,
-    name: event.target.name.value,
-    breed: event.target.breed.value,
-    sex: event.target.sex.value
+    id: dogId,
+    name: dogName,
+    breed: dogBreed,
+    sex: dogSex
   };
-  fetch(`http://localhost:3000/dogs/${event.target.id.value}`, {
+  fetch(`http://localhost:3000/dogs/${dogId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json; charset=utf-8"
-      // "Content-Type": "application/x-www-form-urlencoded",
     },
     body: JSON.stringify(data)
-  });
+  }).then(data => data.json())
+  .then(dog => rederADog(dog));
 }
 
-function clearDogs(event) {
-  let container = document.getElementById("table-body");
-  container.innerHTML = "";
-  this.location.reload(true);
+function rederADog(dog) {
+  document.getElementById(`row-${dog.id}`).innerHTML =
+  `<tr id="row-${dog.id}">
+    <td>${dog.name}</td> 
+    <td>${dog.breed}</td> 
+    <td>${dog.sex}</td> 
+    <td><button id="edit" onclick="editDog(${dog.id})">Edit</button></td>
+  </tr>`;
 }

@@ -2,19 +2,19 @@
   "dogs": [
     {
       "id": 1,
-      "name": "Diamondkfasd;f",
+      "name": "Diamond2",
       "breed": "Labrador",
       "sex": "female"
     },
     {
       "id": 2,
-      "name": "Teddy",
+      "name": "Teddy cookie2",
       "breed": "Rhodesian Ridgeback",
       "sex": "female"
     },
     {
       "id": 3,
-      "name": "Snickers",
+      "name": "Snickers cookie",
       "breed": "Dachshund",
       "sex": "female"
     },
@@ -116,7 +116,7 @@
     },
     {
       "id": 20,
-      "name": "Coco",
+      "name": "Cocododo",
       "breed": "Affenpinscher",
       "sex": "female"
     }
